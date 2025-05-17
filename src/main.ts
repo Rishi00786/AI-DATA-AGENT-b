@@ -16,7 +16,10 @@ async function bootstrap() {
 
   // Enable CORS
   app.enableCors({
-    origin: ['http://localhost:5173', 'https://yourdomain.com'],
+    origin: [
+      'http://localhost:5173',
+      'https://ai-data-agent-eight.vercel.app/',
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   });
