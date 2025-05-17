@@ -1,0 +1,174 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Products
+model Product {
+  id          Int      @id @default(autoincrement())
+  sku         String   @unique
+  name        String
+  description String?
+  price       Float
+  cost        Float
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id])
+  inventory   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orderItems  OrderItem[]
+}
+
+// Categories
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  products    Product[]
+}
+
+// Customers
+model Customer {
+  id           Int      @id @default(autoincrement())
+  firstName    String
+  lastName     String
+  email        String   @unique
+  phone        String?
+  address      String?
+  city         String?
+  state        String?
+  zipCode      String?
+  country      String?
+  regionId     Int
+  region       Region   @relation(fields: [regionId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  lastPurchase DateTime?
+  orders       Order[]
+}
+
+// Orders
+model Order {
+  id           Int         @id @default(autoincrement())
+  customerId   Int
+  customer     Customer    @relation(fields: [customerId], references: [id])
+  orderDate    DateTime    @default(now())
+  status       String      @default("pending")
+  totalAmount  Float
+  shippingCost Float       @default(0)
+  taxAmount    Float       @default(0)
+  discount     Float       @default(0)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  orderItems   OrderItem[]
+}
+
+// Order Items
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   Int
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  unitPrice Float
+  discount  Float   @default(0)
+  subtotal  Float
+}
+
+// Employees
+model Employee {
+  id           Int          @id @default(autoincrement())
+  firstName    String
+  lastName     String
+  email        String       @unique
+  phone        String?
+  position     String
+  departmentId Int
+  department   Department   @relation(fields: [departmentId], references: [id])
+  hireDate     DateTime
+  salary       Float
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+// Departments
+model Department {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  description String?
+  managerId   Int?
+  budget      Float
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  employees   Employee[]
+}
+
+// Marketing Campaigns
+model Campaign {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime?
+  budget      Float
+  spend       Float     @default(0)
+  platform    String?
+  target      String?
+  leads       Int       @default(0)
+  conversions Int       @default(0)
+  revenue     Float     @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// Regions
+model Region {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  country     String
+  customers   Customer[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+// Sales Performance
+model SalesPerformance {
+  id          Int      @id @default(autoincrement())
+  date        DateTime
+  regionId    Int
+  categoryId  Int
+  revenue     Float
+  targetSales Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Financial Metrics
+model FinancialMetrics {
+  id             Int      @id @default(autoincrement())
+  date           DateTime
+  revenue        Float
+  expenses       Float
+  profit         Float
+  cashflow       Float
+  assets         Float
+  liabilities    Float
+  equityValue    Float
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
