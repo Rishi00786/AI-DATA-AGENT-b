@@ -24,6 +24,12 @@ export class PrismaService
     await this.$disconnect();
   }
 
+  // async enableShutdownHooks(app: INestApplication) {
+  //   this.$on('beforeExit' as any, async () => {
+  //     await app.close();
+  //   });
+  // }
+
   // Helper method to clean database during testing
   async cleanDatabase() {
     if (process.env.NODE_ENV !== 'production') {
